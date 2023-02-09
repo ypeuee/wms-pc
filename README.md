@@ -1,57 +1,11 @@
-# Ant Design Pro
+# 小白菜仓库管理系统（ WMS-PC）
 
-This project is initialized with [Ant Design Pro](https://pro.ant.design). Follow is the quick guide for how to use.
+ *项目进行中*   
 
-## Environment Prepare
+>一转眼，在仓储供应链行业摸爬滚打10多载，从一个小程序猿到现在项目经理，一心想写个自己的小仓库管理系统，不为挣钱，只是喜欢开发，喜欢这个行业，也希望能帮到他人。
 
-Install `node_modules`:
+小白菜仓库管理系统分为3部分:
+1.WMS-PC
+2.WMS-小程序
+3.WMS-后台服务
 
-```bash
-npm install
-```
-
-or
-
-```bash
-yarn
-```
-
-## Provided Scripts
-
-Ant Design Pro provides some useful script to help you quick start and build with web project, code style check and test.
-
-Scripts provided in `package.json`. It's safe to modify or add additional script:
-
-### Start project
-
-```bash
-npm start
-```
-
-### Build project
-
-```bash
-npm run build
-```
-
-### Check code style
-
-```bash
-npm run lint
-```
-
-You can also use script to auto fix some lint error:
-
-```bash
-npm run lint:fix
-```
-
-### Test code
-
-```bash
-npm test
-```
-
-## More
-
-You can view full document on our [official website](https://pro.ant.design). And welcome any feedback in our [github](https://github.com/ant-design/ant-design-pro).
