@@ -49,4 +49,12 @@ export default {
   'menu.editor.flow': '流程编辑器',
   'menu.editor.mind': '脑图编辑器',
   'menu.editor.koni': '拓扑编辑器',
+
+  //基础数据
+  'menu.basic-data': '基础数据',
+  'menu.basic-data.company': '公司管理',
+  'menu.basic-data.user': '用户管理',
+  'menu.basic-data.warehouse': '仓库管理',
+  'menu.basic-data.material': '商品管理',
+  'menu.basic-data.position': '仓位管理',
 };

@@ -49,4 +49,12 @@ export default {
   'menu.editor.flow': 'Flow Editor',
   'menu.editor.mind': 'Mind Editor',
   'menu.editor.koni': 'Koni Editor',
+
+  //Basic Data
+  'menu.basic-data': 'Basic Data',
+  'menu.basic-data.company-manage': 'Company Management',
+  'menu.basic-data.user-manage': 'User Management',
+  'menu.basic-data.warehouse-manage': 'Warehouse Management',
+  'menu.basic-data.material-manage': 'Material Management',
+  'menu.basic-data.position': 'Position Management',
 };

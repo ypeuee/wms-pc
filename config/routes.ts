@@ -22,6 +22,50 @@ export default [
       },
     ],
   },
+  //基础数据
+  {
+    path: '/basic-data',
+    icon: 'form',
+    name: 'basic-data',
+    routes: [
+      {
+        path: '/basic-data',
+        redirect: '/basic-data/company',
+      },
+      {
+        name: 'company',
+        icon: 'smile',
+        path: '/basic-data/company',
+        component: './basic-data/company',
+      },
+      {
+        name: 'user',
+        icon: 'smile',
+        path: '/basic-data/user',
+        component: './basic-data/user',
+      },
+      {
+        name: 'warehouse',
+        icon: 'smile',
+        path: '/basic-data/warehouse',
+        component: './basic-data/warehouse',
+      },
+      {
+        name: 'material',
+        icon: 'smile',
+        path: '/basic-data/material',
+        component: './basic-data/material',
+       // hideInMenu: true,
+      },
+      {
+        name: 'position',
+        icon: 'smile',
+        path: '/basic-data/position',
+        component: './basic-data/position',
+       // hideInMenu: true,
+      },
+    ],
+  },
   {
     path: '/welcome',
     name: 'welcome',
