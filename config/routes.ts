@@ -58,6 +58,13 @@ export default [
        // hideInMenu: true,
       },
       {
+        name: 'add-material',
+        icon: 'smile',
+        path: '/basic-data/material/add-form',
+        component: './basic-data/material/add-form',
+        hideInMenu: true,
+      },
+      {
         name: 'position',
         icon: 'smile',
         path: '/basic-data/position',

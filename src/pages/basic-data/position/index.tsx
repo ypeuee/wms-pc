@@ -1,27 +1,26 @@
-import { addRule, removeRule, rule, updateRule } from '@/services/ant-design-pro/api';
-import { PlusOutlined } from '@ant-design/icons';
+import { addRule, removeRule, updateRule } from '@/services/ant-design-pro/api';
+import { CheckOutlined, PlusOutlined, StopOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import {
   FooterToolbar,
-  ModalForm,
   PageContainer,
   ProDescriptions,
-  ProFormText,
-  ProFormTextArea,
   ProTable,
 } from '@ant-design/pro-components';
 import { FormattedMessage, useIntl } from '@umijs/max';
-import { Button, Drawer, Input, message } from 'antd';
+import { Button, Drawer, message } from 'antd';
 import React, { useRef, useState } from 'react';
+import AddForm from './components/add-form';
 import type { FormValueType } from './components/UpdateForm';
 import UpdateForm from './components/UpdateForm';
+import { query } from './service';
 
 /**
  * @en-US Add node
  * @zh-CN 添加节点
  * @param fields
  */
-const handleAdd = async (fields: API.RuleListItem) => {
+const handleAdd = async (fields: Position.ListItem) => {
   const hide = message.loading('正在添加');
   try {
     await addRule({ ...fields });
@@ -66,12 +65,12 @@ const handleUpdate = async (fields: FormValueType) => {
  *
  * @param selectedRows
  */
-const handleRemove = async (selectedRows: API.RuleListItem[]) => {
+const handleRemove = async (selectedRows: Position.ListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
     await removeRule({
-      key: selectedRows.map((row) => row.key),
+      key: selectedRows.map((row) => row.code),
     });
     hide();
     message.success('Deleted successfully and will refresh soon');
@@ -98,8 +97,8 @@ const TableList: React.FC = () => {
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<API.RuleListItem>();
-  const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>([]);
+  const [currentRow, setCurrentRow] = useState<Position.ListItem>();
+  const [selectedRowsState, setSelectedRows] = useState<Position.ListItem[]>([]);
 
   /**
    * @en-US International configuration
@@ -107,16 +106,14 @@ const TableList: React.FC = () => {
    * */
   const intl = useIntl();
 
-  const columns: ProColumns<API.RuleListItem>[] = [
+  const columns: ProColumns<Position.ListItem>[] = [
     {
-      title: (
-        <FormattedMessage
-          id="pages.searchTable.updateForm.ruleName.nameLabel"
-          defaultMessage="Rule name"
-        />
-      ),
+      title: <FormattedMessage id="basic-data.position.table.code" defaultMessage="仓位编码" />,
       dataIndex: 'name',
-      tip: 'The rule name is the unique key',
+      tip: intl.formatMessage({
+        id: 'basic-data.position.table.code.tip',
+        defaultMessage: '同仓库内仓位编码唯一',
+      }),
       render: (dom, entity) => {
         return (
           <a
@@ -131,140 +128,218 @@ const TableList: React.FC = () => {
       },
     },
     {
-      title: <FormattedMessage id="pages.searchTable.titleDesc" defaultMessage="Description" />,
-      dataIndex: 'desc',
-      valueType: 'textarea',
-    },
-    {
       title: (
-        <FormattedMessage
-          id="pages.searchTable.titleCallNo"
-          defaultMessage="Number of service calls"
-        />
+        <FormattedMessage id="basic-data.position.table.storageType" defaultMessage="存储类型" />
       ),
-      dataIndex: 'callNo',
-      sorter: true,
-      hideInForm: true,
-      renderText: (val: string) =>
-        `${val}${intl.formatMessage({
-          id: 'pages.searchTable.tenThousand',
-          defaultMessage: ' 万 ',
-        })}`,
-    },
-    {
-      title: <FormattedMessage id="pages.searchTable.titleStatus" defaultMessage="Status" />,
-      dataIndex: 'status',
+      dataIndex: 'storageType',
       hideInForm: true,
       valueEnum: {
-        0: {
-          text: (
-            <FormattedMessage
-              id="pages.searchTable.nameStatus.default"
-              defaultMessage="Shut down"
-            />
-          ),
-          status: 'Default',
-        },
         1: {
           text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.running" defaultMessage="Running" />
+            <FormattedMessage
+              id="basic-data.position.table.storageType_1"
+              defaultMessage="平面库位"
+            />
           ),
-          status: 'Processing',
         },
         2: {
           text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.online" defaultMessage="Online" />
+            <FormattedMessage
+              id="basic-data.position.table.storageType_2"
+              defaultMessage="高架库位"
+            />
           ),
-          status: 'Success',
         },
         3: {
           text: (
             <FormattedMessage
-              id="pages.searchTable.nameStatus.abnormal"
-              defaultMessage="Abnormal"
+              id="basic-data.position.table.storageType_3"
+              defaultMessage="隔板货架"
             />
           ),
+        },
+        4: {
+          text: (
+            <FormattedMessage
+              id="basic-data.position.table.storageType_4"
+              defaultMessage="AGV拣货区"
+            />
+          ),
+        },
+        5: {
+          text: (
+            <FormattedMessage
+              id="basic-data.position.table.storageType_5"
+              defaultMessage="预包库位"
+            />
+          ),
+        },
+        6: {
+          text: (
+            <FormattedMessage
+              id="basic-data.position.table.storageType_6"
+              defaultMessage="临期库位"
+            />
+          ),
+        },
+      },
+    },
+    {
+      title: (
+        <FormattedMessage id="basic-data.position.table.positionType" defaultMessage="库位类型" />
+      ),
+      hideInForm: true,
+      valueEnum: {
+        1: {
+          text: (
+            <FormattedMessage
+              id="basic-data.position.table.positionType_1"
+              defaultMessage="分拣仓位"
+            />
+          ),
+        },
+        2: {
+          text: (
+            <FormattedMessage
+              id="basic-data.position.table.positionType_2"
+              defaultMessage="存储仓位"
+            />
+          ),
+        },
+      },
+    },
+    {
+      title: (
+        <FormattedMessage id="basic-data.position.table.mateialType" defaultMessage="良次品" />
+      ),
+      hideInForm: true,
+      valueEnum: {
+        1: {
+          text: (
+            <FormattedMessage id="basic-data.position.table.positionType_1" defaultMessage="良品" />
+          ),
+        },
+        2: {
+          text: (
+            <FormattedMessage id="basic-data.position.table.positionType_2" defaultMessage="次品" />
+          ),
+        },
+
+        3: {
+          text: (
+            <FormattedMessage id="basic-data.position.table.mateialType_3" defaultMessage="废品" />
+          ),
+        },
+      },
+    },
+    {
+      title: <FormattedMessage id="basic-data.position.table.status" defaultMessage="仓位状态" />,
+      dataIndex: 'status',
+      hideInForm: true,
+      valueEnum: {
+        0: {
+          text: <FormattedMessage id="basic-data.position.table.status_0" defaultMessage="启用" />,
+          status: 'Success',
+        },
+        1: {
+          text: <FormattedMessage id="basic-data.position.table.status_1" defaultMessage="禁用" />,
           status: 'Error',
         },
       },
     },
     {
-      title: (
-        <FormattedMessage
-          id="pages.searchTable.titleUpdatedAt"
-          defaultMessage="Last scheduled time"
-        />
-      ),
-      sorter: true,
-      dataIndex: 'updatedAt',
-      valueType: 'dateTime',
-      renderFormItem: (item, { defaultRender, ...rest }, form) => {
-        const status = form.getFieldValue('status');
-        if (`${status}` === '0') {
-          return false;
-        }
-        if (`${status}` === '3') {
-          return (
-            <Input
-              {...rest}
-              placeholder={intl.formatMessage({
-                id: 'pages.searchTable.exception',
-                defaultMessage: 'Please enter the reason for the exception!',
-              })}
-            />
-          );
-        }
-        return defaultRender(item);
-      },
+      title: <FormattedMessage id="basic-data.position.table.area" defaultMessage="区域" />,
+      valueType: 'textarea',
     },
     {
-      title: <FormattedMessage id="pages.searchTable.titleOption" defaultMessage="Operating" />,
-      dataIndex: 'option',
-      valueType: 'option',
-      render: (_, record) => [
-        <a
-          key="config"
-          onClick={() => {
-            handleUpdateModalOpen(true);
-            setCurrentRow(record);
-          }}
-        >
-          <FormattedMessage id="pages.searchTable.config" defaultMessage="Configuration" />
-        </a>,
-        <a key="subscribeAlert" href="https://procomponents.ant.design/">
-          <FormattedMessage
-            id="pages.searchTable.subscribeAlert"
-            defaultMessage="Subscribe to alerts"
-          />
-        </a>,
-      ],
+      title: <FormattedMessage id="basic-data.position.table.tunnel" defaultMessage="巷道" />,
+      valueType: 'textarea',
+      filterSearch:false,
+    },
+    // {
+    //   title: (
+    //     <FormattedMessage id="basic-data.position.table.upPriority" defaultMessage="上架优先级" />
+    //   ),
+    //   valueType: 'textarea',
+    // },
+    // {
+    //   title: (
+    //     <FormattedMessage id="basic-data.position.table.downPriority" defaultMessage="下架优先级" />
+    //   ),
+    //   valueType: 'textarea',
+    // },
+    // {
+    //   title: (
+    //     <FormattedMessage id="basic-data.position.table.WarehouseName" defaultMessage="仓库" />
+    //   ),
+    //   valueType: 'textarea',
+    //   hideInForm: true,
+    // },
+    // {
+    //   title: (
+    //     <FormattedMessage id="basic-data.position.table.memberName" defaultMessage="会员名称" />
+    //   ),
+    //   valueType: 'textarea',
+    // },
+    // {
+    //   title: <FormattedMessage id="basic-data.position.table.memberCode" defaultMessage="会员号" />,
+    //   valueType: 'textarea',
+    // },
+    {
+      title: (
+        <FormattedMessage id="basic-data.position.table.createTime" defaultMessage="创建时间" />
+      ),
+      sorter: true,
+      dataIndex: 'createTime',
+      valueType: 'dateTime',
     },
   ];
 
   return (
     <PageContainer>
-      <ProTable<API.RuleListItem, API.PageParams>
+      <ProTable<Position.ListItem, API.PageParams>
         headerTitle={intl.formatMessage({
-          id: 'pages.searchTable.title',
-          defaultMessage: 'Enquiry form',
+          id: 'basic-data.position.table.title',
+          defaultMessage: '仓位列表',
         })}
         actionRef={actionRef}
-        rowKey="key"
+        rowKey="code"
         search={{
           labelWidth: 120,
         }}
         toolBarRender={() => [
+          //新增
           <Button
             type="primary"
-            key="primary"
+            key="add"
             onClick={() => {
               handleModalOpen(true);
             }}
           >
-            <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
+            {<PlusOutlined />}
+            {intl.formatMessage({
+              id: 'pages.button.new',
+              defaultMessage: '新增',
+            })}
+          </Button>,
+          //锁定 ghost danger
+          <Button key="lock" type="default" danger>
+            <StopOutlined />
+            {intl.formatMessage({
+              id: 'pages.button.lock',
+              defaultMessage: '锁定',
+            })}
+          </Button>,
+          //解锁
+          <Button key="unlock" type="primary" ghost >
+            <CheckOutlined />
+            {intl.formatMessage({
+              id: 'pages.button.unlock',
+              defaultMessage: '解锁',
+            })}
           </Button>,
         ]}
-        request={rule}
+        request={query}
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {
@@ -272,6 +347,7 @@ const TableList: React.FC = () => {
           },
         }}
       />
+
       {selectedRowsState?.length > 0 && (
         <FooterToolbar
           extra={
@@ -279,15 +355,6 @@ const TableList: React.FC = () => {
               <FormattedMessage id="pages.searchTable.chosen" defaultMessage="Chosen" />{' '}
               <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
               <FormattedMessage id="pages.searchTable.item" defaultMessage="项" />
-              &nbsp;&nbsp;
-              <span>
-                <FormattedMessage
-                  id="pages.searchTable.totalServiceCalls"
-                  defaultMessage="Total number of service calls"
-                />{' '}
-                {selectedRowsState.reduce((pre, item) => pre + item.callNo!, 0)}{' '}
-                <FormattedMessage id="pages.searchTable.tenThousand" defaultMessage="万" />
-              </span>
             </div>
           }
         >
@@ -311,7 +378,8 @@ const TableList: React.FC = () => {
           </Button>
         </FooterToolbar>
       )}
-      <ModalForm
+
+      {/* <ModalForm
         title={intl.formatMessage({
           id: 'pages.searchTable.createForm.newRule',
           defaultMessage: 'New rule',
@@ -320,7 +388,7 @@ const TableList: React.FC = () => {
         open={createModalOpen}
         onOpenChange={handleModalOpen}
         onFinish={async (value) => {
-          const success = await handleAdd(value as API.RuleListItem);
+          const success = await handleAdd(value as Position.ListItem);
           if (success) {
             handleModalOpen(false);
             if (actionRef.current) {
@@ -329,6 +397,7 @@ const TableList: React.FC = () => {
           }
         }}
       >
+    
         <ProFormText
           rules={[
             {
@@ -345,7 +414,23 @@ const TableList: React.FC = () => {
           name="name"
         />
         <ProFormTextArea width="md" name="desc" />
-      </ModalForm>
+      </ModalForm> */}
+
+      <AddForm
+        //添加仓位
+        open={createModalOpen}
+        onOpenChange={handleModalOpen}
+        onFinish={async (value) => {
+          const success = await handleAdd(value as Position.ListItem);
+          if (success) {
+            handleModalOpen(false);
+            if (actionRef.current) {
+              actionRef.current.reload();
+            }
+          }
+        }}
+      />
+
       <UpdateForm
         onSubmit={async (value) => {
           const success = await handleUpdate(value);
@@ -376,17 +461,17 @@ const TableList: React.FC = () => {
         }}
         closable={false}
       >
-        {currentRow?.name && (
-          <ProDescriptions<API.RuleListItem>
+        {currentRow?.code && (
+          <ProDescriptions<Position.ListItem>
             column={2}
-            title={currentRow?.name}
+            title={currentRow?.code}
             request={async () => ({
               data: currentRow || {},
             })}
             params={{
-              id: currentRow?.name,
+              id: currentRow?.code,
             }}
-            columns={columns as ProDescriptionsItemProps<API.RuleListItem>[]}
+            columns={columns as ProDescriptionsItemProps<Position.ListItem>[]}
           />
         )}
       </Drawer>
