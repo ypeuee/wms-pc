@@ -5,8 +5,10 @@ import pages from './zh-CN/pages';
 import pwa from './zh-CN/pwa';
 import settingDrawer from './zh-CN/settingDrawer';
 import settings from './zh-CN/settings';
-import basicData_Position from './zh-CN/basic-data.position';
-import basicData_Material from './zh-CN/basic-data.material';
+import basicData_Position from './zh-CN/basic-data/position';
+import basicData_Material from './zh-CN/basic-data/material';
+
+import warehouseIn_OrderForm from './zh-CN/warehoue-in/order-form';
 
 export default {
   'navBar.lang': '语言',
@@ -26,4 +28,6 @@ export default {
   ...component,
   ...basicData_Position,
   ...basicData_Material,
+
+  warehouseIn_OrderForm,
 };

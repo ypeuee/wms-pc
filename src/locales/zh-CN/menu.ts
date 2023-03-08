@@ -57,4 +57,21 @@ export default {
   'menu.basic-data.warehouse': '仓库管理',
   'menu.basic-data.material': '商品管理',
   'menu.basic-data.position': '仓位管理',
+
+  //入库
+  'menu.warehouse-in': '入库管理',
+  'menu.warehouse-in.order-form': '入库任务',
+  'menu.warehouse-in.add-form': '新建入库单',
+  'menu.warehouse-in.up-form': '上架管理',
+
+  //出库
+  'menu.warehouse-out': '出库管理',
+  'menu.warehouse-out.order-form': '出库任务',
+  'menu.warehouse-out.add-form': '新建出库单',
+
+
+
+  //库内
+
+  //统计
 };

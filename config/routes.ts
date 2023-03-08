@@ -74,6 +74,32 @@ export default [
     ],
   },
   {
+    path: '/warehouse-in',
+    name: 'warehouse-in',
+    icon: 'crown',
+    routes: [
+      {
+        path: '/warehouse-in',
+        redirect: '/warehouse-in/order-form',
+      },
+      {
+        path: '/warehouse-in/order-form',
+        name: 'order-form',
+        component: './warehouse-in/order-form',
+      },
+      {
+        path: '/warehouse-in/add-form',
+        name: 'add-form',
+        component: './warehouse-in/add-form',
+      },
+      {
+        path: '/warehouse-in/up-form',
+        name: 'up-form',
+        component: './warehouse-in/up-form',
+      },
+    ],
+  },
+  {
     path: '/welcome',
     name: 'welcome',
     icon: 'smile',

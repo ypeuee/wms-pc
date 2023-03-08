@@ -44,19 +44,19 @@ const tableData = [
   {
     key: '1',
     workId: '00001',
-    name: 'John Brown',
+    name: '69123456',
     department: 'New York No. 1 Lake Park',
   },
   {
     key: '2',
     workId: '00002',
-    name: 'Jim Green',
+    name: '6912345234',
     department: 'London No. 1 Lake Park',
   },
   {
     key: '3',
     workId: '00003',
-    name: 'Joe Black',
+    name: '69123456123',
     department: 'Sidney No. 1 Lake Park',
   },
 ];

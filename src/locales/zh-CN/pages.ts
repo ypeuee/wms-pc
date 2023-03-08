@@ -69,11 +69,15 @@ export default {
   'pages.button.unlock': '解锁',
   'pages.button.disable': '禁用',
   'pages.button.delete': '删除',
+  'pages.button.cancel': '取消',
+  'pages.button.cancelOrder': '撒单',
   'pages.button.add': '添加',
   'pages.button.new': '新增',
   'pages.button.create': '新建',
   'pages.button.import': '导入',
   'pages.button.export': '导出',
+  'pages.button.print': '打印',
+
   //公共提示
   'pages.rules': '为必填项', //和添加或修改页面中必填项内容拼接提示。如：仓位编码 + 为必填项
   'pages.placeholder': '请输入', 
