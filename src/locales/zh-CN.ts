@@ -5,10 +5,12 @@ import pages from './zh-CN/pages';
 import pwa from './zh-CN/pwa';
 import settingDrawer from './zh-CN/settingDrawer';
 import settings from './zh-CN/settings';
+//基础
 import basicData_Position from './zh-CN/basic-data/position';
 import basicData_Material from './zh-CN/basic-data/material';
-
+//入库
 import warehouseIn_OrderForm from './zh-CN/warehoue-in/order-form';
+import warehisueIn_AddForm from './zh-CN/warehoue-in/add-form';
 
 export default {
   'navBar.lang': '语言',
@@ -29,5 +31,6 @@ export default {
   ...basicData_Position,
   ...basicData_Material,
 
-  warehouseIn_OrderForm,
+  ...warehouseIn_OrderForm,
+  ...warehisueIn_AddForm,
 };

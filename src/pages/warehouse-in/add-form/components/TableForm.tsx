@@ -2,8 +2,9 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, Input, message, Popconfirm, Table } from 'antd';
 import type { FC } from 'react';
 import React, { useState } from 'react';
+import { useIntl } from 'umi';
 
-import styles from '../index.less';
+import styles from '../style.less';
 
 type TableFormDateType = {
   key: string;
@@ -42,6 +43,24 @@ const TableForm: FC<TableFormProps> = ({ value, onChange }) => {
       setData(newData);
     }
   };
+
+  /**
+   * @en-US International configuration
+   * @zh-CN 国际化配置
+   * */
+  const intl = useIntl();
+  /**@name 提示语：请输入   */
+  const placeholder = intl.formatMessage({
+    id: 'pages.placeholder',
+    defaultMessage: '请输入',
+  });
+
+  /**@name 提示语：为必填项   */
+  const rules = intl.formatMessage({
+    id: 'pages.rules',
+    defaultMessage: '为必填项',
+  });
+
   const newMember = () => {
     const newData = data?.map((item) => ({ ...item })) || [];
 
@@ -134,11 +153,34 @@ const TableForm: FC<TableFormProps> = ({ value, onChange }) => {
     setClickedCancel(false);
   };
 
+  const fieldTitle = {
+    materialName: intl.formatMessage({
+      id: 'warehouse-in.add-form.table.materialName',
+      defaultMessage: '物料名称',
+    }),
+    materialCode: intl.formatMessage({
+      id: 'warehouse-in.add-form.table.materialCode',
+      defaultMessage: '物料编码',
+    }),
+    quantity: intl.formatMessage({
+      id: 'warehouse-in.add-form.table.quantity',
+      defaultMessage: '数量',
+    }),
+    materialType: intl.formatMessage({
+      id: 'warehouse-in.add-form.table.materialType',
+      defaultMessage: '正残属性',
+    }),
+    materialBatch: intl.formatMessage({
+      id: 'warehouse-in.add-form.table.materialBatch',
+      defaultMessage: '批次',
+    }),
+  };
+
   const columns = [
     {
-      title: '成员姓名',
-      dataIndex: 'name',
-      key: 'name',
+      title: fieldTitle.materialName,
+      dataIndex: 'materialName',
+      key: 'materialName',
       width: '20%',
       render: (text: string, record: TableFormDateType) => {
         if (record.editable) {
@@ -146,9 +188,9 @@ const TableForm: FC<TableFormProps> = ({ value, onChange }) => {
             <Input
               value={text}
               autoFocus
-              onChange={(e) => handleFieldChange(e, 'name', record.key)}
+              onChange={(e) => handleFieldChange(e, 'materialName', record.key)}
               onKeyPress={(e) => handleKeyPress(e, record.key)}
-              placeholder="成员姓名"
+              placeholder={placeholder + fieldTitle.materialName}
             />
           );
         }
@@ -156,18 +198,18 @@ const TableForm: FC<TableFormProps> = ({ value, onChange }) => {
       },
     },
     {
-      title: '工号',
-      dataIndex: 'workId',
-      key: 'workId',
+      title: fieldTitle.materialCode,
+      dataIndex: 'materialCode',
+      key: 'materialCode',
       width: '20%',
       render: (text: string, record: TableFormDateType) => {
         if (record.editable) {
           return (
             <Input
               value={text}
-              onChange={(e) => handleFieldChange(e, 'workId', record.key)}
+              onChange={(e) => handleFieldChange(e, 'materialCode', record.key)}
               onKeyPress={(e) => handleKeyPress(e, record.key)}
-              placeholder="工号"
+              placeholder= {placeholder + fieldTitle.materialCode}
             />
           );
         }
@@ -175,23 +217,42 @@ const TableForm: FC<TableFormProps> = ({ value, onChange }) => {
       },
     },
     {
-      title: '所属部门',
-      dataIndex: 'department',
-      key: 'department',
+      title: fieldTitle.quantity,
+      dataIndex: 'quantity',
+      key: 'quantity',
       width: '40%',
       render: (text: string, record: TableFormDateType) => {
         if (record.editable) {
           return (
             <Input
               value={text}
-              onChange={(e) => handleFieldChange(e, 'department', record.key)}
+              onChange={(e) => handleFieldChange(e, 'quantity', record.key)}
               onKeyPress={(e) => handleKeyPress(e, record.key)}
-              placeholder="所属部门"
+              placeholder={placeholder + fieldTitle.quantity}
             />
           );
         }
         return text;
-      },
+      },      
+    },
+    {
+      title: fieldTitle.materialBatch,
+      dataIndex: 'materialBatch',
+      key: 'materialBatch',
+      width: '40%',
+      render: (text: string, record: TableFormDateType) => {
+        if (record.editable) {
+          return (
+            <Input
+              value={text}
+              onChange={(e) => handleFieldChange(e, 'materialBatch', record.key)}
+              onKeyPress={(e) => handleKeyPress(e, record.key)}
+              placeholder={placeholder + fieldTitle.materialBatch}
+            />
+          );
+        }
+        return text;
+      },      
     },
     {
       title: '操作',

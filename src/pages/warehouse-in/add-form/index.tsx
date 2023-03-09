@@ -1,19 +1,14 @@
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { Card, Col, Popover, Row, message } from 'antd';
-
-import type { FC } from 'react';
-import { useState } from 'react';
-import ProForm, {
-  ProFormDateRangePicker,
-  ProFormSelect,
-  ProFormText,
-  ProFormTimePicker,
-} from '@ant-design/pro-form';
+import ProForm, { ProFormSelect, ProFormText } from '@ant-design/pro-form';
+import { FooterToolbar, PageContainer } from '@ant-design/pro-layout';
 import type { ProColumnType } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
-import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
-import { fakeSubmitForm } from './service';
+import { Card, Col, message, Popover, Row } from 'antd';
+import type { FC } from 'react';
+import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'umi';
 import styles from './index.less';
+import { fakeSubmitForm } from './service';
 
 interface TableFormDateType {
   key: string;
@@ -23,41 +18,33 @@ interface TableFormDateType {
   isNew?: boolean;
   editable?: boolean;
 }
-type InternalNamePath = (string | number)[];
 
-const fieldLabels = {
-  name: '仓库名',
-  url: '仓库域名',
-  owner: '仓库管理员',
-  approver: '审批人',
-  dateRange: '生效日期',
-  type: '仓库类型',
-  name2: '任务名',
-  url2: '任务描述',
-  owner2: '执行人',
-  approver2: '责任人',
-  dateRange2: '生效日期',
-  type2: '任务类型',
-};
+type InternalNamePath = (string | number)[];
 
 const tableData = [
   {
     key: '1',
-    workId: '00001',
-    name: 'John Brown',
-    department: 'New York No. 1 Lake Park',
+    materialName: '华为笔记本电脑',
+    materialCode: '69237263264',
+    quantity: 100,
+    materialType: 1,
+    materialBatch: '20230310',
   },
   {
     key: '2',
-    workId: '00002',
-    name: 'Jim Green',
-    department: 'London No. 1 Lake Park',
+    materialName: '苹果笔记本电脑',
+    materialCode: '69237263263',
+    quantity: 80,
+    materialType: 1,
+    materialBatch: '20230310',
   },
   {
     key: '3',
-    workId: '00003',
-    name: 'Joe Black',
-    department: 'Sidney No. 1 Lake Park',
+    materialName: '联想笔记本电脑',
+    materialCode: '69237263266',
+    quantity: 50,
+    materialType: 1,
+    materialBatch: '20230310',
   },
 ];
 
@@ -67,6 +54,39 @@ interface ErrorField {
 }
 
 const AdvancedForm: FC<Record<string, any>> = () => {
+  /**
+   * @en-US International configuration
+   * @zh-CN 国际化配置
+   * */
+  const intl = useIntl();
+  /**@name 提示语：请输入   */
+  const placeholder = intl.formatMessage({
+    id: 'pages.placeholder',
+    defaultMessage: '请输入',
+  });
+
+  /**@name 提示语：为必填项   */
+  const rules = intl.formatMessage({
+    id: 'pages.rules',
+    defaultMessage: '为必填项',
+  });
+
+  const fieldLabels = {
+    externalCode: intl.formatMessage({
+      id: 'warehouse-in.add-form.externalCode',
+      defaultMessage: '外部单据号',
+    }), //'外部单据号',
+    orderType: intl.formatMessage({
+      id: 'warehouse-in.add-form.orderType',
+      defaultMessage: '单据类型',
+    }), //'单据类型',
+    remarks: intl.formatMessage({
+      id: 'warehouse-in.add-form.remarks',
+      defaultMessage: '备注',
+    }), // '备注',
+  
+  };
+
   const [error, setError] = useState<ErrorField[]>([]);
   const getErrorInfo = (errors: ErrorField[]) => {
     const errorCount = errors.filter((item) => item.errors.length > 0).length;
@@ -126,25 +146,52 @@ const AdvancedForm: FC<Record<string, any>> = () => {
   const onFinishFailed = (errorInfo: any) => {
     setError(errorInfo.errorFields);
   };
+  const fieldTitle = {
+    materialName: intl.formatMessage({
+      id: 'warehouse-in.add-form.table.materialName',
+      defaultMessage: '物料名称',
+    }),
+    materialCode: intl.formatMessage({
+      id: 'warehouse-in.add-form.table.materialCode',
+      defaultMessage: '物料编码',
+    }),
+    quantity: intl.formatMessage({
+      id: 'warehouse-in.add-form.table.quantity',
+      defaultMessage: '数量',
+    }),
+    materialType: intl.formatMessage({
+      id: 'warehouse-in.add-form.table.materialType',
+      defaultMessage: '正残属性',
+    }),
+    materialBatch: intl.formatMessage({
+      id: 'warehouse-in.add-form.table.materialBatch',
+      defaultMessage: '批次',
+    }),
+  };
 
   const columns: ProColumnType<TableFormDateType>[] = [
     {
-      title: '成员姓名',
-      dataIndex: 'name',
-      key: 'name',
+      title: fieldTitle.materialName,
+      dataIndex: 'materialName',
+      key: 'materialName',
       width: '20%',
     },
     {
-      title: '工号',
-      dataIndex: 'workId',
-      key: 'workId',
+      title: fieldTitle.materialCode,
+      dataIndex: 'materialCode',
+      key: 'materialCode',
       width: '20%',
     },
     {
-      title: '所属部门',
-      dataIndex: 'department',
-      key: 'department',
-      width: '40%',
+      title: fieldTitle.quantity,
+      dataIndex: 'quantity',
+      key: 'quantity',
+      width: '20%',
+    },    {
+      title: fieldTitle.materialBatch,
+      dataIndex: 'materialBatch',
+      key: 'materialBatch',
+      width: '20%',
     },
     {
       title: '操作',
@@ -183,187 +230,84 @@ const AdvancedForm: FC<Record<string, any>> = () => {
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
     >
-      <PageContainer content="高级表单常见于一次性输入和提交大批量数据的场景。">
-        <Card title="仓库管理" className={styles.card} bordered={false}>
+      <PageContainer
+        content={intl.formatMessage({
+          id: 'warehouse-in.add-form.content',
+          defaultMessage: ' 创建入库任务，并指定入库商品及数量。 ',
+        })}
+      >
+        <Card
+          title={<FormattedMessage id="warehouse-in.add-form.title" defaultMessage="入库单信息" />}
+          className={styles.card}
+          bordered={false}
+        >
           <Row gutter={16}>
             <Col lg={6} md={12} sm={24}>
-              <ProFormText
-                label={fieldLabels.name}
-                name="name"
-                rules={[{ required: true, message: '请输入仓库名称' }]}
-                placeholder="请输入仓库名称"
+              <ProFormSelect
+                label={fieldLabels.orderType}
+                name="orderType"
+                rules={[
+                  {
+                    required: true,
+                    message: fieldLabels.orderType + rules,
+                  },
+                ]}
+                options={[
+                  {
+                    label: intl.formatMessage({
+                      id: 'warehouse-in.add-form.orderType_1',
+                      defaultMessage: '采购入库',
+                    }),
+                    value: 1,
+                  },
+                  {
+                    label: intl.formatMessage({
+                      id: 'warehouse-in.add-form.orderType_2',
+                      defaultMessage: '销退入库',
+                    }),
+                    value: 2,
+                  },
+                  {
+                    label: intl.formatMessage({
+                      id: 'warehouse-in.add-form.orderType_3',
+                      defaultMessage: '盘盈入库',
+                    }),
+                    value: 3,
+                  },
+                  {
+                    label: intl.formatMessage({
+                      id: 'warehouse-in.add-form.orderType_4',
+                      defaultMessage: '其他入库',
+                    }),
+                    value: 4,
+                  },
+                ]}
+                placeholder={placeholder + fieldLabels.orderType}
               />
             </Col>
             <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
               <ProFormText
-                label={fieldLabels.url}
-                name="url"
-                rules={[{ required: true, message: '请选择' }]}
-                fieldProps={{
-                  style: { width: '100%' },
-                  addonBefore: 'http://',
-                  addonAfter: '.com',
-                }}
-                placeholder="请输入"
+                label={fieldLabels.externalCode}
+                name="externalCode"
+                rules={[
+                  {
+                    required: false,
+                    message: fieldLabels.externalCode + rules,
+                  },
+                ]}
+                placeholder={placeholder + fieldLabels.externalCode}
               />
             </Col>
             <Col xl={{ span: 8, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
-              <ProFormSelect
-                label={fieldLabels.owner}
-                name="owner"
-                rules={[{ required: true, message: '请选择管理员' }]}
-                options={[
-                  {
-                    label: '付晓晓',
-                    value: 'xiao',
-                  },
-                  {
-                    label: '周毛毛',
-                    value: 'mao',
-                  },
-                ]}
-                placeholder="请选择管理员"
-              />
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col lg={6} md={12} sm={24}>
-              <ProFormSelect
-                label={fieldLabels.approver}
-                name="approver"
-                rules={[{ required: true, message: '请选择审批员' }]}
-                options={[
-                  {
-                    label: '付晓晓',
-                    value: 'xiao',
-                  },
-                  {
-                    label: '周毛毛',
-                    value: 'mao',
-                  },
-                ]}
-                placeholder="请选择审批员"
-              />
-            </Col>
-            <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
-              <ProFormDateRangePicker
-                label={fieldLabels.dateRange}
-                name="dateRange"
-                fieldProps={{
-                  style: {
-                    width: '100%',
-                  },
-                }}
-                rules={[{ required: true, message: '请选择生效日期' }]}
-              />
-            </Col>
-            <Col xl={{ span: 8, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
-              <ProFormSelect
-                label={fieldLabels.type}
-                name="type"
-                rules={[{ required: true, message: '请选择仓库类型' }]}
-                options={[
-                  {
-                    label: '私密',
-                    value: 'private',
-                  },
-                  {
-                    label: '公开',
-                    value: 'public',
-                  },
-                ]}
-                placeholder="请选择仓库类型"
-              />
-            </Col>
-          </Row>
-        </Card>
-        <Card title="任务管理" className={styles.card} bordered={false}>
-          <Row gutter={16}>
-            <Col lg={6} md={12} sm={24}>
               <ProFormText
-                label={fieldLabels.name2}
+                label={fieldLabels.remarks}
                 name="name2"
-                rules={[{ required: true, message: '请输入' }]}
-              />
-            </Col>
-            <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
-              <ProFormText
-                label={fieldLabels.url2}
-                name="url2"
-                rules={[{ required: true, message: '请选择' }]}
-              />
-            </Col>
-            <Col xl={{ span: 8, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
-              <ProFormSelect
-                label={fieldLabels.owner2}
-                name="owner2"
-                rules={[{ required: true, message: '请选择管理员' }]}
-                options={[
-                  {
-                    label: '付晓晓',
-                    value: 'xiao',
-                  },
-                  {
-                    label: '周毛毛',
-                    value: 'mao',
-                  },
-                ]}
-              />
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col lg={6} md={12} sm={24}>
-              <ProFormSelect
-                label={fieldLabels.approver2}
-                name="approver2"
-                rules={[{ required: true, message: '请选择审批员' }]}
-                options={[
-                  {
-                    label: '付晓晓',
-                    value: 'xiao',
-                  },
-                  {
-                    label: '周毛毛',
-                    value: 'mao',
-                  },
-                ]}
-                placeholder="请选择审批员"
-              />
-            </Col>
-            <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
-              <ProFormTimePicker
-                label={fieldLabels.dateRange2}
-                name="dateRange2"
-                rules={[{ required: true, message: '请输入' }]}
-                placeholder="提醒时间"
-                fieldProps={{
-                  style: {
-                    width: '100%',
-                  },
-                }}
-              />
-            </Col>
-            <Col xl={{ span: 8, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
-              <ProFormSelect
-                label={fieldLabels.type2}
-                name="type2"
-                rules={[{ required: true, message: '请选择仓库类型' }]}
-                options={[
-                  {
-                    label: '私密',
-                    value: 'private',
-                  },
-                  {
-                    label: '公开',
-                    value: 'public',
-                  },
-                ]}
-                placeholder="请选择仓库类型"
+                placeholder={placeholder + fieldLabels.remarks}
               />
             </Col>
           </Row>
         </Card>
-        <Card title="成员管理" bordered={false}>
+        <Card title="入库物料" bordered={false}>
           <ProForm.Item name="members">
             <EditableProTable<TableFormDateType>
               recordCreatorProps={{

@@ -1,4 +1,4 @@
-//基础数据-物料管理  warehouse-in.order-form.
+//入库管理-入库任务  warehouse-in.order-form.
 
 export default {
     //table
