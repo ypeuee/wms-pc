@@ -100,6 +100,52 @@ export default [
     ],
   },
   {
+    path: '/warehouse-out',
+    name: 'warehouse-out',
+    icon: 'crown',
+    routes: [
+      {
+        path: '/warehouse-out',
+        redirect: '/warehouse-out/order-form',
+      },
+      {
+        path: '/warehouse-out/order-form',
+        name: 'order-form',
+        component: './warehouse-out/order-form',
+      },
+      {
+        path: '/warehouse-out/add-form',
+        name: 'add-form',
+        component: './warehouse-out/add-form',
+      },
+      {
+        path: '/warehouse-out/dispatch-form',
+        name: 'dispatch-form',
+        component: './warehouse-out/dispatch-form',
+      },
+      {
+        path: '/warehouse-out/create-pick-order',
+        name: 'create-pick-order',
+        component: './warehouse-out/create-pick-order',
+      },
+      {
+        path: '/warehouse-out/pick-order',
+        name: 'pick-order',
+        component: './warehouse-out/pick-order',
+      },
+      {
+        path: '/warehouse-out/check-pick',
+        name: 'check-pick',
+        component: './warehouse-out/check-pick',
+      },   
+        {
+          path: '/warehouse-out/check-pick-list',
+          name: 'check-pick-list',
+          component: './warehouse-out/check-pick-list',
+        },  
+    ],
+  },
+  {
     path: '/welcome',
     name: 'welcome',
     icon: 'smile',

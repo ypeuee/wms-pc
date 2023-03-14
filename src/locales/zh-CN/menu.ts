@@ -68,10 +68,25 @@ export default {
   'menu.warehouse-out': '出库管理',
   'menu.warehouse-out.order-form': '出库任务',
   'menu.warehouse-out.add-form': '新建出库单',
-
-
+  'menu.warehouse-out.dispatch-form': '调度',
+  'menu.warehouse-out.create-pick-order': '创建拣货单',
+  'menu.warehouse-out.pick-order': '拣货单管理',
+  'menu.warehouse-out.check-pick': '复核',
+  'menu.warehouse-out.check-pick-list': '批量复核',
 
   //库内
+  'menu.warehouse-inner': '在库管理',
+  'menu.warehouse-inner.move-position': '库内移位',
+  'menu.warehouse-inner.add-move-position': '创建库内移位',
+  'menu.warehouse-inner.check-stock': '盘点库存',
+  'menu.warehouse-inner.add-check-stock': '创建盘点库存',
 
   //统计
+  'menu.report-form': '统计报表',
+  'menu.report-form.material-stack': '物料库存',
+  'menu.report-form.position-stack': '仓位库存',
+  'menu.report-form.warehouse-out': '出库流水',
+  'menu.report-form.warehouse-in': '入库流水',
+  'menu.report-form.material-out-top': '销量排名',
+
 };
