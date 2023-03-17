@@ -1,10 +1,340 @@
-import React from 'react';
 import styles from './index.less';
 
-export default function Page() {
+import { PlusOutlined,CarOutlined,ClearOutlined } from '@ant-design/icons';
+import { Button, message, Input, Drawer } from 'antd';
+import React, { useState, useRef } from 'react';
+import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
+import type { ProColumns, ActionType } from '@ant-design/pro-table';
+import ProTable from '@ant-design/pro-table';
+import { ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
+import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
+import ProDescriptions from '@ant-design/pro-descriptions';
+import type { FormValueType } from './components/UpdateForm';
+import UpdateForm from './components/UpdateForm';
+import { rule, addRule, updateRule, removeRule } from './service';
+import type { TableListItem, TableListPagination } from './data';
+ 
+/**
+ * 更新节点
+ *
+ * @param fields
+ */
+
+const handleUpdate = async (fields: FormValueType, currentRow?: TableListItem) => {
+  const hide = message.loading('正在配置');
+
+  try {
+    await updateRule({
+      ...currentRow,
+      ...fields,
+    });
+    hide();
+    message.success('配置成功');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('配置失败请重试！');
+    return false;
+  }
+};
+/**
+ * 删除节点
+ *
+ * @param selectedRows
+ */
+
+const handleRemove = async (selectedRows: TableListItem[]) => {
+  const hide = message.loading('正在删除');
+  if (!selectedRows) return true;
+
+  try {
+    await removeRule({
+      key: selectedRows.map((row) => row.key),
+    });
+    hide();
+    message.success('删除成功，即将刷新');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('删除失败，请重试');
+    return false;
+  }
+};
+
+const TableList: React.FC = () => {
+  
+  /** 分布更新窗口的弹窗 */
+
+  const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
+  const [showDetail, setShowDetail] = useState<boolean>(false);
+  const actionRef = useRef<ActionType>();
+  const [currentRow, setCurrentRow] = useState<TableListItem>();
+  const [selectedRowsState, setSelectedRows] = useState<TableListItem[]>([]);
+  /** 国际化配置 */
+
+  const columns: ProColumns<TableListItem>[] = [
+    {
+      title: '出库单号',
+      dataIndex: 'name',
+      tip: '出库单号是唯一的 key',
+      render: (dom, entity) => {
+        return (
+          <a
+            onClick={() => {
+              setCurrentRow(entity);
+              setShowDetail(true);
+            }}
+          >
+            {dom}
+          </a>
+        );
+      },
+    },
+    {
+      title: '外部单号',
+      dataIndex: 'desc',
+      valueType: 'textarea',
+    },  {
+      title: '单据类型',
+      dataIndex: 'status',
+      hideInForm: true,
+      valueEnum: {
+        1: {
+          text: '销售出库单',
+          status: 'Default',
+        },
+        2: {
+          text: '拔调出库单',
+          status: 'Processing',
+        },
+        3: {
+          text: '盈亏出库单',
+          status: 'Success',
+        },
+        4: {
+          text: '其他出库单',
+          status: 'Success',
+        },
+      },
+    },
+    {
+      title: '出库数量',
+      dataIndex: 'callNo',
+      sorter: true,
+      hideInForm: true,
+      renderText: (val: string) => `${val}万`,
+    },
+    {
+      title: '单据状态',
+      dataIndex: 'status',
+      hideInForm: true,
+      valueEnum: {
+       
+        1: {
+          text: '已创建',
+          status: 'Processing',
+        },
+        2: {
+          text: '已审核',
+          status: 'Processing',
+        },
+        3: {
+          text: '调度',
+          status: 'Error',
+        },
+        4: {
+          text: '已创建波次',
+          status: 'Error',
+        },
+        5: {
+          text: '创建拣货单',
+          status: 'Error',
+        },
+        6: {
+          text: '复核中',
+          status: 'Error',
+        },
+        7: {
+          text: '部分复核',
+          status: 'Error',
+        },
+       8: {
+          text: '复核结束',
+          status: 'Error',
+        },
+        9: {
+          text: '待交接',
+          status: 'Error',
+        },
+      },
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      hideInForm: true,
+      valueEnum: {
+        1: {
+          text: '正常',
+          status: 'Default',
+        },
+        2: {
+          text: '挂起',
+          status: 'Processing',
+        },
+        3: {
+          text: '撤单',
+          status: 'Success',
+        },
+        
+      },
+    },  
+    {
+      title: '创建时间',
+      sorter: true,
+      dataIndex: 'updatedAt',
+      valueType: 'dateTime',
+      renderFormItem: (item, { defaultRender, ...rest }, form) => {
+        const status = form.getFieldValue('status');
+
+        if (`${status}` === '0') {
+          return false;
+        }
+
+        if (`${status}` === '3') {
+          return <Input {...rest} placeholder="请输入异常原因！" />;
+        }
+
+        return defaultRender(item);
+      },
+    },
+    {
+      title: '操作',
+      dataIndex: 'option',
+      valueType: 'option',
+      render: (_, record) => [
+        <a
+          key="config"
+          onClick={() => {
+            handleUpdateModalVisible(true);
+            setCurrentRow(record);
+          }}
+        >
+          调度
+        </a>,
+               <a
+               key="config"
+               onClick={() => {
+                 handleUpdateModalVisible(true);
+                 setCurrentRow(record);
+               }}
+             >
+               取消调度
+             </a>,
+      ],
+    },
+  ];
+
   return (
-    <div>
-      <h1 className={styles.title}>Page index</h1>
-    </div>
+    <PageContainer>
+      <ProTable<TableListItem, TableListPagination>
+        headerTitle="查询表格"
+        actionRef={actionRef}
+        rowKey="key"
+        search={{
+          labelWidth: 120,
+        }}
+        toolBarRender={() => [
+       
+        ]}
+        request={rule}
+        columns={columns}
+        rowSelection={{
+          onChange: (_, selectedRows) => {
+            setSelectedRows(selectedRows);
+          },
+        }}
+      />
+      {selectedRowsState?.length > 0 && (
+        <FooterToolbar
+          extra={
+            <div>
+              已选择{' '}
+              <a
+                style={{
+                  fontWeight: 600,
+                }}
+              >
+                {selectedRowsState.length}
+              </a>{' '}
+              项 &nbsp;&nbsp;
+              <span>
+                服务调用次数总计 {selectedRowsState.reduce((pre, item) => pre + item.callNo!, 0)} 万
+              </span>
+            </div>
+          }
+        >
+          <Button type="primary" 
+            onClick={async () => {
+              await handleRemove(selectedRowsState);
+              setSelectedRows([]);
+              actionRef.current?.reloadAndRest?.();
+            }}
+          >
+            <CarOutlined />
+            批量调度
+          </Button>
+          <Button   type="default" danger>
+          <ClearOutlined />
+          批量取消调度</Button>
+        </FooterToolbar>
+      )}
+ 
+      <UpdateForm
+        onSubmit={async (value) => {
+          const success = await handleUpdate(value, currentRow);
+
+          if (success) {
+            handleUpdateModalVisible(false);
+            setCurrentRow(undefined);
+
+            if (actionRef.current) {
+              actionRef.current.reload();
+            }
+          }
+        }}
+        onCancel={() => {
+          handleUpdateModalVisible(false);
+          setCurrentRow(undefined);
+        }}
+        updateModalVisible={updateModalVisible}
+        values={currentRow || {}}
+      />
+
+      <Drawer
+        width={600}
+        visible={showDetail}
+        onClose={() => {
+          setCurrentRow(undefined);
+          setShowDetail(false);
+        }}
+        closable={false}
+      >
+        {currentRow?.name && (
+          <ProDescriptions<TableListItem>
+            column={2}
+            title={currentRow?.name}
+            request={async () => ({
+              data: currentRow || {},
+            })}
+            params={{
+              id: currentRow?.name,
+            }}
+            columns={columns as ProDescriptionsItemProps<TableListItem>[]}
+          />
+        )}
+      </Drawer>
+    </PageContainer>
   );
-}
+};
+
+export default TableList;
